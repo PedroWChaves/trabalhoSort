@@ -1,8 +1,16 @@
-#include "stdio.h"
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <ctime>
 
-void bubbleSort(int *vet, int n)
+using namespace std;
+
+// quantas palavras serão lidas do arquivo
+#define SIZE 40 * 1000
+
+void bubbleSort(string vet[], int n)
 {
-    int aux;
+    string aux;
 
     for (int i = 0; i < n; i++)
         for (int j = 0; j < n - 1 - i; j++)
@@ -14,9 +22,10 @@ void bubbleSort(int *vet, int n)
             }
 }
 
-void selectionSort(int *vet, int n)
+void selectionSort(string vet[], int n)
 {
-    int menor, aux;
+    int menor;
+    string aux;
 
     for (int i = 0; i < n - 1; i++)
     {
@@ -31,9 +40,11 @@ void selectionSort(int *vet, int n)
     }
 }
 
-void insertionSort(int vet[], int n)
+void insertionSort(string vet[], int n)
 {
-    int aux, j;
+    int j;
+    string aux;
+
     for (int i = 1; i < n; i++)
     {
         aux = vet[i];
@@ -44,9 +55,10 @@ void insertionSort(int vet[], int n)
     }
 }
 
-void shellSort(int *vet, int n)
+void shellSort(string vet[], int n)
 {
-    int aux, j, h;
+    string aux;
+    int j, h;
     h = n / 2;
 
     while (h >= 1)
@@ -54,7 +66,6 @@ void shellSort(int *vet, int n)
         for (int i = 1; i < n; i++)
         {
             aux = vet[i];
-
             for (j = i - h; (j >= 0) && (vet[j] > aux); j = j - h)
                 vet[j + h] = vet[j];
             vet[j + h] = aux;
@@ -64,7 +75,7 @@ void shellSort(int *vet, int n)
     }
 }
 
-void mergeIntercala(int *vet, int *aux, int ini, int meio, int fim)
+void mergeIntercala(string vet[], string aux[], int ini, int meio, int fim)
 {
     int atual, fimEsq, n;
 
@@ -92,7 +103,7 @@ void mergeIntercala(int *vet, int *aux, int ini, int meio, int fim)
     }
 }
 
-void mergeDivide(int *vet, int *aux, int ini, int fim)
+void mergeDivide(string vet[], string aux[], int ini, int fim)
 {
     int meio;
 
@@ -107,17 +118,16 @@ void mergeDivide(int *vet, int *aux, int ini, int fim)
     }
 }
 
-void mergeSort(int *vet, int n)
+void mergeSort(string vet[], int n)
 {
-    int aux[n];
+    string aux[n];
     mergeDivide(vet, aux, 0, n - 1);
 }
 
-int particiona(int *vet, int esq, int dir)
+int particiona(string vet[], int esq, int dir)
 {
-    int i, j, pivo, aux;
-    i = esq;
-    j = dir;
+    int i = esq, j = dir;
+    string pivo, aux;
     pivo = vet[esq];
 
     while (i < j)
@@ -140,7 +150,7 @@ int particiona(int *vet, int esq, int dir)
     return j;
 }
 
-void quickSort(int *vet, int esq, int dir)
+void quickSort(string vet[], int esq, int dir)
 {
     if (esq < dir)
     {
@@ -150,11 +160,12 @@ void quickSort(int *vet, int esq, int dir)
     }
 }
 
-void sink(int *vet, int n, int i)
+void sink(string vet[], int n, int i)
 {
+    int maior;
     int esq = 2 * i + 1;
     int dir = 2 * i + 2;
-    int maior, aux;
+    string aux;
 
     maior = i;
     if ((esq < n) && (vet[esq] > vet[maior]))
@@ -171,15 +182,15 @@ void sink(int *vet, int n, int i)
     }
 }
 
-void createHeap(int *vet, int n)
+void createHeap(string vet[], int n)
 {
     for (int i = n / 2 - 1; i >= 0; i--)
         sink(vet, n, i);
 }
 
-void heapSort(int *vet, int n)
+void heapSort(string vet[], int n)
 {
-    int aux;
+    string aux;
     createHeap(vet, n);
     for (int i = n - 1; i > 0; i--)
     {
@@ -190,15 +201,40 @@ void heapSort(int *vet, int n)
     }
 }
 
+void readFromFile(string filename, string vet[])
+{
+    ifstream aurelio(filename); // abre o arquivo para leitura
+    int i = 0;
+
+    if (aurelio.is_open())
+    {
+        while (aurelio) // le enquanto houver palavras no arquivo
+        {
+            aurelio >> vet[i++];
+        }
+    }
+    aurelio.close(); // fecha o arquivo
+}
+
 int main()
 {
-    int vet[10] = {7, 4, 3, 5, 9, 8, 1, 0, 2, 6};
+    string palavras[40001], palavra;
 
-    mergeSort(vet, 10);
-    for (int i = 0; i < 10; i++)
-    {
-        printf("%d ", vet[i]);
-    }
+    readFromFile("aurelio40000.txt", palavras);
+
+    int startTime = (int)clock(); // marca o "tempo" de inicio
+
+    // realiza o algoritmo desejado
+    // bubbleSort(palavras, SIZE);
+    // selectionSort(palavras, SIZE);
+    // insertionSort(palavras, SIZE);
+    // shellSort(palavras, SIZE);
+    // mergeSort(palavras, SIZE);
+    quickSort(palavras, 0, SIZE - 1);
+    // heapSort(palavras, SIZE);
+
+    // marca o "tempo" final, realiza a conversão para ms e mostra na tela
+    cout << (((int)clock() - startTime) * 1000 / CLOCKS_PER_SEC) << endl;
 
     return 0;
 }
